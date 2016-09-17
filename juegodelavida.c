@@ -55,6 +55,15 @@ int main(int argc, char *argv[]) {
     i = (unsigned int)atoi(argv[1]); //cantidad de ciclos
     M = (unsigned int)atoi(argv[2]);
     N = (unsigned int)atoi(argv[3]);
+    if (M == 0){
+    	printf("La cantidad de filas debe ser mayor a 0.\r\n");
+    	return 1;
+    }
+
+    if (N == 0){
+		printf("El tamaño de las columnas debe ser mayor a 0.\r\n");
+		return 1;
+	}
 
     char* matriz = malloc(M*N*sizeof(unsigned char));
     for(unsigned int a = 0; a < M*N; a++){
