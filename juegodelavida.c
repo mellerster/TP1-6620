@@ -85,11 +85,9 @@ int main(int argc, char *argv[]) {
     for(unsigned int a = 0; a < M*N; a++){
     		matriz[a] = ' ';
     }
-    matriz[getPosicion(1,3,N)] = 'x';
-    matriz[getPosicion(2,4,N)] = 'x';
-    matriz[getPosicion(3,2,N)] = 'x';
-    matriz[getPosicion(3,3,N)] = 'x';
-    matriz[getPosicion(3,4,N)] = 'x';
+    /*matriz[getPosicion(1,2,N)] = 'x';
+    matriz[getPosicion(2,2,N)] = 'x';
+    matriz[getPosicion(3,2,N)] = 'x';*/
     printf("Cantidad de repeticiones: %u\r\n",i);
     printf("Filas: %u\r\n",M);
     printf("Columnas: %u\r\n",N);

@@ -2,6 +2,7 @@
 
 unsigned int vecinos(unsigned char *a,unsigned int i, unsigned int j, unsigned int M, unsigned int N){
     unsigned int v = 0;
+    //Ver que pasa con los bordes si sigue del otro lado o no.
     if(i != 0){
     	//Chequeo arriba
     	if (a[(i-1)*N+j] != ' '){
