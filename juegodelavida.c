@@ -3,6 +3,37 @@
 #include <stdlib.h>
 #include "vecinos.h"
 
+
+int AbrirArchivo(char* path, FILE **fp) {
+	*fp = fopen(path, "r");
+	if(*fp == NULL)
+		return 1;
+	return 0;
+}
+
+int CrearArchivoOutput(char *archivo, FILE **fop) {
+	if((*fop = fopen(archivo, "w+b")) == NULL) {
+		/*Tiro error de apertura de archivo*/
+		return 1;
+	}
+	return 0;
+}
+
+void ProcesarArchivo(FILE *fp) {
+	/*char linea[MaxSizePanta];
+	memset(linea, ' ', sizeof(linea));
+	char *n;
+	while(!feof(fp)) {
+		n = fgets(linea, sizeof(linea), fp);
+		if(n != NULL) {
+		}
+	}*/
+}
+
+void CerrarArchivo(FILE *fp) {
+	fclose(fp);
+}
+
 int main(int argc, char *argv[]) {
     unsigned int i = 0,M = 0,N = 0;
     if (argc < 4){
@@ -13,9 +44,18 @@ int main(int argc, char *argv[]) {
     } else if (argc == 5) {
         //Salida con nombre
     }
+    FILE *fp;
+	int n = AbrirArchivo(argv[4], &fp);
+	if(n == 1){
+		//No se pudo abrir el archivo
+		printf("El archivo %s no pudo ser abierto.\r\n",argv[4]);
+		return 1;
+	}
+
     i = (unsigned int)atoi(argv[1]); //cantidad de ciclos
     M = (unsigned int)atoi(argv[2]);
     N = (unsigned int)atoi(argv[3]);
+
     char* matriz = malloc(M*N*sizeof(unsigned char));
     for(unsigned int a = 0; a < M*N; a++){
     		matriz[a] = ' ';
@@ -55,3 +95,5 @@ int main(int argc, char *argv[]) {
     free(matriz);
     return 0;
 }
+
+
