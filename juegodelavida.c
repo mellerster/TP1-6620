@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
     		for(unsigned int b = 0; b < N; b++){
     			//Recorro los casilleros
     			unsigned int v = vecinos(matriz, a, b, M, N);
-    			if(matriz[a*b] == ' '){
+    			if(matriz[a*M+b] == ' '){
     				//Estaba muerta
     				if (v == 3){
     				}
