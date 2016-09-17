@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include "vecinos.h"
 
-
 int AbrirArchivo(char* path, FILE **fp) {
 	*fp = fopen(path, "r");
 	if(*fp == NULL)
@@ -34,8 +33,21 @@ void CerrarArchivo(FILE *fp) {
 	fclose(fp);
 }
 
-unsigned int getPosicion(unsigned int i, unsigned int j, unsigned int M){
-	return i*M+j;
+unsigned int getPosicion(unsigned int i, unsigned int j, unsigned int N){
+	return i*N+j;
+}
+
+void imprimirMatriz(unsigned char *matriz,unsigned int M,unsigned int N){
+	for (unsigned int i = 0; i < M; i++){
+		for (unsigned int j = 0; j < N; j++){
+			unsigned int pos = getPosicion(i,j,N);
+			printf(" %c ",(matriz[pos] == ' ' ? 'x' : 'o'));
+			if(j != (N-1)){
+				printf("|");
+			}
+		}
+		printf("\n");
+	}
 }
 
 int main(int argc, char *argv[]) {
@@ -69,10 +81,15 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 
-    char* matriz = malloc(M*N*sizeof(unsigned char));
+    unsigned char* matriz = malloc(M*N*sizeof(unsigned char));
     for(unsigned int a = 0; a < M*N; a++){
     		matriz[a] = ' ';
     }
+    matriz[getPosicion(1,3,N)] = 'x';
+    matriz[getPosicion(2,4,N)] = 'x';
+    matriz[getPosicion(3,2,N)] = 'x';
+    matriz[getPosicion(3,3,N)] = 'x';
+    matriz[getPosicion(3,4,N)] = 'x';
     printf("Cantidad de repeticiones: %u\r\n",i);
     printf("Filas: %u\r\n",M);
     printf("Columnas: %u\r\n",N);
@@ -80,32 +97,35 @@ int main(int argc, char *argv[]) {
     //Recorro las iteraciones
     for(unsigned int j = 0; j < i; j++){
     	printf("iteración %u\n",j);
+    	imprimirMatriz(matriz,M,N);
+    	unsigned char* copia = malloc(M*N*sizeof(unsigned char));
         //Vivir
     	for	(unsigned int a = 0; a < M; a++){
     		for(unsigned int b = 0; b < N; b++){
     			//Recorro los casilleros
     			unsigned int v = vecinos(matriz, a, b, M, N);
-    			unsigned int pos = getPosicion(a,b,M);
-    			printf("La posicion (%u,%u) posicion %u tiene %u vecinos\n",a,b,pos,v);
-    			/*if(matriz[pos] == ' '){
+    			unsigned int pos = getPosicion(a,b,N);
+    			// printf("La posicion (%u,%u) posicion %u tiene %u vecinos\n",a,b,pos,v);
+    			copia[pos] = matriz[pos];
+    			if(matriz[pos] == ' '){
     				//Estaba muerta
     				if (v == 3){
-    					matriz[pos] = 'x';
+    					copia[pos] = 'x';
     				}
     			} else {
     				//Estaba viva
-    				if (v >=2 && v <= 3){
-    					//sigue viva
-    					matriz[pos] = 'x';
-    				} else {
+    				if (v < 2 || v > 3){
     					//muere
-    					matriz[pos] = ' ';
+    					copia[pos] = ' ';
     				}
-    			}*/
+    			}
     		}
     	}
+    	free(matriz);
+    	matriz = copia;
     }
 	printf("Finalizacion Exitosa\r\n");
+	imprimirMatriz(matriz,M,N);
     //Llamo a vecinos
     unsigned int prueba = vecinos((unsigned char*)&"hola",1,1,M,N);
     printf("%i\r\n %u\r\n",prueba,i);
