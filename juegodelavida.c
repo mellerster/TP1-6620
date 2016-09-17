@@ -34,6 +34,10 @@ void CerrarArchivo(FILE *fp) {
 	fclose(fp);
 }
 
+unsigned int getPosicion(unsigned int i, unsigned int j, unsigned int M){
+	return i*M+j;
+}
+
 int main(int argc, char *argv[]) {
     unsigned int i = 0,M = 0,N = 0;
     if (argc < 4){
@@ -73,29 +77,33 @@ int main(int argc, char *argv[]) {
     printf("Filas: %u\r\n",M);
     printf("Columnas: %u\r\n",N);
     //Armo matriz inicial
-    
     //Recorro las iteraciones
     for(unsigned int j = 0; j < i; j++){
+    	printf("iteración %u\n",j);
         //Vivir
     	for	(unsigned int a = 0; a < M; a++){
     		for(unsigned int b = 0; b < N; b++){
     			//Recorro los casilleros
     			unsigned int v = vecinos(matriz, a, b, M, N);
-    			if(matriz[a*M+b] == ' '){
+    			unsigned int pos = getPosicion(a,b,M);
+    			printf("La posicion (%u,%u) posicion %u tiene %u vecinos\n",a,b,pos,v);
+    			/*if(matriz[pos] == ' '){
     				//Estaba muerta
     				if (v == 3){
+    					matriz[pos] = 'x';
     				}
     			} else {
     				//Estaba viva
     				if (v >=2 && v <= 3){
     					//sigue viva
+    					matriz[pos] = 'x';
     				} else {
     					//muere
+    					matriz[pos] = ' ';
     				}
-    			}
+    			}*/
     		}
     	}
-        printf("Repetición %u\r\n",j);
     }
 	printf("Finalizacion Exitosa\r\n");
     //Llamo a vecinos
