@@ -110,6 +110,51 @@ void GrabarArchivoSalida(unsigned char *matriz, unsigned int M, unsigned int N, 
 	CerrarArchivo(archivoSalida);
 }
 
+void abortarCargaMatriz(char* mensaje, unsigned char* matriz, FILE* archivo) {
+	printf("%s", mensaje);
+	free(matriz);
+	CerrarArchivo(archivo);
+	exit(-1);
+}
+
+void cargarMatriz(unsigned char* matriz, FILE *archivo, unsigned int M, unsigned int N) {
+	rewind(archivo);
+	unsigned int fila = 0;
+	unsigned int columna = 0;
+	int proximoCaracter;
+	while (!feof(archivo)) {
+		fscanf(archivo, "%u", &fila);
+		printf("FILA: %d\n", fila);
+		if (fgetc(archivo) != ' ') {
+			abortarCargaMatriz("\n\nError en el formato del archivo de entrada\n\n", matriz, archivo);
+		}
+		proximoCaracter = fgetc(archivo);
+		if (!((proximoCaracter >= '0') && (proximoCaracter <= '9'))) {
+			abortarCargaMatriz("\n\nError en el formato del archivo de entrada\n\n", matriz, archivo);
+		}
+		fseek(archivo, -1, SEEK_CUR);
+		if (fila > M-1) {
+			abortarCargaMatriz("\n\nUn numero de fila en el archivo de entrada es mayor que el maximo permitido\n\n", matriz, archivo);
+		}
+		fscanf(archivo, "%u", &columna);
+		printf("COLUMNA: %d\n", columna);
+		if (fgetc(archivo) != '\n') {
+			abortarCargaMatriz("\n\nError en el formato del archivo de entrada\n\n", matriz, archivo);
+		}
+		proximoCaracter = fgetc(archivo);
+		if ((!((proximoCaracter >= '0') && (proximoCaracter <= '9'))) && (proximoCaracter != EOF)) {
+			abortarCargaMatriz("\n\nError en el formato del archivo de entrada\n\n", matriz, archivo);
+		}
+		if (proximoCaracter != EOF) {
+			fseek(archivo, -1, SEEK_CUR);
+		}
+		if (columna > N-1) {
+			abortarCargaMatriz("\n\nUn numero de columna en el archivo de entrada es mayor que el maximo permitido\n\n", matriz, archivo);
+		}
+	}
+
+}
+
 int main(int argc, char *argv[]) {
     unsigned int i = 0,M = 0,N = 0,a = 0,n = 0,v,pos,j,b;
     char* prefijoSalida;
@@ -192,8 +237,8 @@ int main(int argc, char *argv[]) {
 	matriz[getPosicion(3,2,N)] = NOVACIO;*/
 
 	//Cargar matriz con archivo de entrada, en caso de tener errores no seguir y cerrar puntero y borrar matriz.
+	cargarMatriz(matriz, fp, M, N);
 
-	printf("Leyendo estado inicial...\n");
 	imprimirMatriz(matriz,M,N);
 	GrabarArchivoSalida(matriz,M,N,prefijoSalida,0);
 	//Recorro las iteraciones
