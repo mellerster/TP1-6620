@@ -80,29 +80,31 @@ void GrabarArchivoSalida(unsigned char *matriz, unsigned int M, unsigned int N, 
 	sprintf(buf, "%u", j);
 	strcat(nombreArchivoSalida,buf),
 	strcat(nombreArchivoSalida,".pbm");
-	printf(nombreArchivoSalida);
+	printf("%s\n",nombreArchivoSalida);
 	printf("\n");
 	CrearArchivoOutput(nombreArchivoSalida,&archivoSalida);
 	//Grabar Encabezado de archivo
+	printf("Grabo P1\n");
 	fprintf(archivoSalida,"P1\n");
+	printf("Grabo M = %u y N = %u\n",M,N);
 	fprintf(archivoSalida,"%u %u\n",M,N);
-
+	printf("Empiezo con las filas\n");
 	//Recorrer Matriz y grabar archivo
 	for(a = 0;a < M;a++){
-		printf("grabo fila");
-		for(int c = 0; c < 16; c++){
+		printf("grabo fila %u\n",a);
 			for(b = 0;b < N;b++){
 				//Grabo posicion
-				if(matriz[getPosicion(a,b,N)] == VACIO){
-					for(int c = 0; c < 16; c++)
-						fprintf(archivoSalida,"0");
+				printf("Posicion: (%u,%u) = %u\n",a,b,getPosicion(a,b,N));
+				fprintf(archivoSalida,"%u",matriz[getPosicion(a,b,N)]);
+				/*if(matriz[getPosicion(a,b,N)] == VACIO){
+					fprintf(archivoSalida,(char)0);
+					//fprintf(archivoSalida,(char)0);
 				} else {
-					for(int c = 0; c < 16; c++)
-						fprintf(archivoSalida,"1");
-				}
+					fprintf(archivoSalida,(char)1);
+					//fprintf(archivoSalida,(char)-1);
+				}*/
 			}
 			fprintf(archivoSalida,"\n");
-		}
 	}
 	//Cerrar archivo
 	CerrarArchivo(archivoSalida);
@@ -185,15 +187,17 @@ int main(int argc, char *argv[]) {
 	for(a = 0; a < M*N; a++){
 		matriz[a] = VACIO;
     }
+	/*matriz[getPosicion(1,2,N)] = NOVACIO;
+	matriz[getPosicion(2,2,N)] = NOVACIO;
+	matriz[getPosicion(3,2,N)] = NOVACIO;*/
 
 	//Cargar matriz con archivo de entrada, en caso de tener errores no seguir y cerrar puntero y borrar matriz.
 
 	printf("Leyendo estado inicial...\n");
+	imprimirMatriz(matriz,M,N);
+	GrabarArchivoSalida(matriz,M,N,prefijoSalida,0);
 	//Recorro las iteraciones
     for(j = 0; j < i; j++){
-    	GrabarArchivoSalida(matriz,M,N,prefijoSalida,j);
-    	printf("iteración %u\n",j);
-    	imprimirMatriz(matriz,M,N);
     	unsigned char* copia = malloc(M*N*sizeof(unsigned char));
         //Vivir
     	for	(a = 0; a < M; a++){
@@ -218,10 +222,11 @@ int main(int argc, char *argv[]) {
     	}
     	free(matriz);
     	matriz = copia;
-    	GrabarArchivoSalida(matriz,M,N,prefijoSalida,j+1);
+    	printf("iteración %u\n",j+1);
+    	imprimirMatriz(matriz,M,N);
+    	//GrabarArchivoSalida(matriz,M,N,prefijoSalida,j+1);
     }
 	printf("Listo\r\n");
-	imprimirMatriz(matriz,M,N);
     free(matriz);
     CerrarArchivo(fp);
     fclose(stdout);
