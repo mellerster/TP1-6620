@@ -71,16 +71,41 @@ void InvocacionIncorrecta(){
 
 void GrabarArchivoSalida(unsigned char *matriz, unsigned int M, unsigned int N, char *prefijoSalida,unsigned int j){
 	unsigned int a = 0, b = 0;
+	FILE *archivoSalida;
+	char nombreArchivoSalida[50];
+	char buf[5];
 	printf("Grabando estado %s_%u.pbm\n",prefijoSalida,j);
+	strcpy(nombreArchivoSalida,prefijoSalida);
+	strcat(nombreArchivoSalida,"_");
+	sprintf(buf, "%u", j);
+	strcat(nombreArchivoSalida,buf),
+	strcat(nombreArchivoSalida,".pbm");
+	printf(nombreArchivoSalida);
+	printf("\n");
+	CrearArchivoOutput(nombreArchivoSalida,&archivoSalida);
 	//Grabar Encabezado de archivo
+	fprintf(archivoSalida,"P1\n");
+	fprintf(archivoSalida,"%u %u\n",M,N);
+
 	//Recorrer Matriz y grabar archivo
-	for(;a < M;a++){
-		for(;b < N;b++){
-			//Grabo posicion
+	for(a = 0;a < M;a++){
+		printf("grabo fila");
+		for(int c = 0; c < 16; c++){
+			for(b = 0;b < N;b++){
+				//Grabo posicion
+				if(matriz[getPosicion(a,b,N)] == VACIO){
+					for(int c = 0; c < 16; c++)
+						fprintf(archivoSalida,"0");
+				} else {
+					for(int c = 0; c < 16; c++)
+						fprintf(archivoSalida,"1");
+				}
+			}
+			fprintf(archivoSalida,"\n");
 		}
-		//Nueva Fila
 	}
 	//Cerrar archivo
+	CerrarArchivo(archivoSalida);
 }
 
 int main(int argc, char *argv[]) {
@@ -162,9 +187,11 @@ int main(int argc, char *argv[]) {
     }
 
 	//Cargar matriz con archivo de entrada, en caso de tener errores no seguir y cerrar puntero y borrar matriz.
+
 	printf("Leyendo estado inicial...\n");
 	//Recorro las iteraciones
     for(j = 0; j < i; j++){
+    	GrabarArchivoSalida(matriz,M,N,prefijoSalida,j);
     	printf("iteración %u\n",j);
     	imprimirMatriz(matriz,M,N);
     	unsigned char* copia = malloc(M*N*sizeof(unsigned char));
@@ -191,12 +218,14 @@ int main(int argc, char *argv[]) {
     	}
     	free(matriz);
     	matriz = copia;
-    	GrabarArchivoSalida(matriz,M,N,prefijoSalida,j);
+    	GrabarArchivoSalida(matriz,M,N,prefijoSalida,j+1);
     }
 	printf("Listo\r\n");
 	imprimirMatriz(matriz,M,N);
     free(matriz);
     CerrarArchivo(fp);
+    fclose(stdout);
+	fclose(stderr);
     return 0;
 }
 
