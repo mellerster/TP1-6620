@@ -69,7 +69,7 @@ void InvocacionIncorrecta(){
 	ImprimirError("Invocación del programa incorrecta\n");
 }
 
-void GrabarArchivoSalida(unsigned char *matriz, unsigned int M, unsigned int N, char *prefijoSalida,unsigned int j){
+void GrabarArchivoSalida(unsigned char *matriz, unsigned int M, unsigned int N, char *prefijoSalida, unsigned int j) {
 	unsigned int a = 0, b = 0;
 	FILE *archivoSalida;
 	char nombreArchivoSalida[50];
@@ -92,17 +92,10 @@ void GrabarArchivoSalida(unsigned char *matriz, unsigned int M, unsigned int N, 
 	//Recorrer Matriz y grabar archivo
 	for(a = 0;a < M;a++){
 		printf("grabo fila %u\n",a);
-			for(b = 0;b < N;b++){
+			for(b = 0;b < N;b++) {
 				//Grabo posicion
 				printf("Posicion: (%u,%u) = %u\n",a,b,getPosicion(a,b,N));
 				fprintf(archivoSalida,"%u",matriz[getPosicion(a,b,N)]);
-				/*if(matriz[getPosicion(a,b,N)] == VACIO){
-					fprintf(archivoSalida,(char)0);
-					//fprintf(archivoSalida,(char)0);
-				} else {
-					fprintf(archivoSalida,(char)1);
-					//fprintf(archivoSalida,(char)-1);
-				}*/
 			}
 			fprintf(archivoSalida,"\n");
 	}
@@ -111,48 +104,57 @@ void GrabarArchivoSalida(unsigned char *matriz, unsigned int M, unsigned int N, 
 }
 
 void abortarCargaMatriz(char* mensaje, unsigned char* matriz, FILE* archivo) {
-	printf("%s", mensaje);
+	ImprimirError(mensaje);
 	free(matriz);
 	CerrarArchivo(archivo);
+    fclose(stdout);
+	fclose(stderr);
 	exit(-1);
+}
+
+unsigned char obtenerNumeroFila(unsigned char* matriz, FILE *archivo, unsigned int M) {
+	unsigned char fila = 0;
+	fscanf(archivo, "%hhu", &fila);
+	if (fgetc(archivo) != ' ') {
+		abortarCargaMatriz("\n\nError en el formato del archivo de entrada\n\n", matriz, archivo);
+	}
+	int proximoCaracter = fgetc(archivo);
+	if (!((proximoCaracter >= '0') && (proximoCaracter <= '9'))) {
+		abortarCargaMatriz("\n\nError en el formato del archivo de entrada\n\n", matriz, archivo);
+	}
+	fseek(archivo, -1, SEEK_CUR);
+	if (fila > M-1) {
+		abortarCargaMatriz("\n\nUn numero de fila en el archivo de entrada es mayor que el maximo permitido\n\n", matriz, archivo);
+	}
+	return fila;
+}
+
+unsigned char obtenerNumeroColumna(unsigned char* matriz, FILE *archivo, unsigned int N) {
+	unsigned char columna = 0;
+	fscanf(archivo, "%hhu", &columna);
+	if (fgetc(archivo) != '\n') {
+		abortarCargaMatriz("\n\nError en el formato del archivo de entrada\n\n", matriz, archivo);
+	}
+	int proximoCaracter = fgetc(archivo);
+	if ((!((proximoCaracter >= '0') && (proximoCaracter <= '9'))) && (proximoCaracter != EOF)) {
+		abortarCargaMatriz("\n\nError en el formato del archivo de entrada\n\n", matriz, archivo);
+	}
+	if (proximoCaracter != EOF) {
+		fseek(archivo, -1, SEEK_CUR);
+	}
+	if (columna > N-1) {
+		abortarCargaMatriz("\n\nUn numero de columna en el archivo de entrada es mayor que el maximo permitido\n\n", matriz, archivo);
+	}
+	return columna;
 }
 
 void cargarMatriz(unsigned char* matriz, FILE *archivo, unsigned int M, unsigned int N) {
 	rewind(archivo);
-	unsigned int fila = 0;
-	unsigned int columna = 0;
-	int proximoCaracter;
 	while (!feof(archivo)) {
-		fscanf(archivo, "%u", &fila);
-		printf("FILA: %d\n", fila);
-		if (fgetc(archivo) != ' ') {
-			abortarCargaMatriz("\n\nError en el formato del archivo de entrada\n\n", matriz, archivo);
-		}
-		proximoCaracter = fgetc(archivo);
-		if (!((proximoCaracter >= '0') && (proximoCaracter <= '9'))) {
-			abortarCargaMatriz("\n\nError en el formato del archivo de entrada\n\n", matriz, archivo);
-		}
-		fseek(archivo, -1, SEEK_CUR);
-		if (fila > M-1) {
-			abortarCargaMatriz("\n\nUn numero de fila en el archivo de entrada es mayor que el maximo permitido\n\n", matriz, archivo);
-		}
-		fscanf(archivo, "%u", &columna);
-		printf("COLUMNA: %d\n", columna);
-		if (fgetc(archivo) != '\n') {
-			abortarCargaMatriz("\n\nError en el formato del archivo de entrada\n\n", matriz, archivo);
-		}
-		proximoCaracter = fgetc(archivo);
-		if ((!((proximoCaracter >= '0') && (proximoCaracter <= '9'))) && (proximoCaracter != EOF)) {
-			abortarCargaMatriz("\n\nError en el formato del archivo de entrada\n\n", matriz, archivo);
-		}
-		if (proximoCaracter != EOF) {
-			fseek(archivo, -1, SEEK_CUR);
-		}
-		if (columna > N-1) {
-			abortarCargaMatriz("\n\nUn numero de columna en el archivo de entrada es mayor que el maximo permitido\n\n", matriz, archivo);
-		}
+		unsigned char fila = obtenerNumeroFila(matriz, archivo, M);
+		unsigned char columna = obtenerNumeroColumna(matriz, archivo, N);
+		matriz[fila*N + columna] = NOVACIO;
 	}
-
 }
 
 int main(int argc, char *argv[]) {
@@ -269,7 +271,7 @@ int main(int argc, char *argv[]) {
     	matriz = copia;
     	printf("iteración %u\n",j+1);
     	imprimirMatriz(matriz,M,N);
-    	//GrabarArchivoSalida(matriz,M,N,prefijoSalida,j+1);
+    	GrabarArchivoSalida(matriz,M,N,prefijoSalida,j+1);
     }
 	printf("Listo\r\n");
     free(matriz);
