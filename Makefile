@@ -41,7 +41,7 @@ extension = c
 CFLAGS = -Wall
 #
 # Para optimizar el binario resultante lo mejor posible
-CFLAGS += -O3
+CFLAGS += -O0
 
 # Para valgrind o debug
 CFLAGS += -ggdb -DDEBUG -fno-inline
@@ -148,4 +148,7 @@ $(target): $(o_files)
 
 clean:
 	$(RM) $(o_files) $(target)
+	
+asm:
+	gcc -Wall -o $(target) vecinos.S juegodelavida.c
 
