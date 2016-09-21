@@ -21,17 +21,6 @@ int CrearArchivoOutput(char *archivo, FILE **fop) {
 	return 0;
 }
 
-void ProcesarArchivo(FILE *fp) {
-	/*char linea[MaxSizePanta];
-	memset(linea, ' ', sizeof(linea));
-	char *n;
-	while(!feof(fp)) {
-		n = fgets(linea, sizeof(linea), fp);
-		if(n != NULL) {
-		}
-	}*/
-}
-
 void CerrarArchivo(FILE *fp) {
 	fclose(fp);
 }
@@ -41,9 +30,10 @@ unsigned int getPosicion(unsigned int i, unsigned int j, unsigned int N){
 }
 
 void imprimirMatriz(unsigned char *matriz,unsigned int M,unsigned int N){
-	for (unsigned int i = 0; i < M; i++){
-		for (unsigned int j = 0; j < N; j++){
-			unsigned int pos = getPosicion(i,j,N);
+	unsigned int i = 0, j = 0, pos = 0;
+	for (i = 0; i < M; i++){
+		for (j = 0; j < N; j++){
+			pos = getPosicion(i,j,N);
 			printf(" %c ",(matriz[pos] == VACIO ? 'x' : 'o'));
 			if(j != (N-1)){
 				printf("|");
@@ -70,34 +60,31 @@ void InvocacionIncorrecta(){
 }
 
 void GrabarArchivoSalida(unsigned char *matriz, unsigned int M, unsigned int N, char *prefijoSalida, unsigned int j) {
-	unsigned int a = 0, b = 0;
+	unsigned int a = 0, b = 0,c = 0, d = 0;
 	FILE *archivoSalida;
 	char nombreArchivoSalida[50];
 	char buf[5];
-	printf("Grabando estado %s_%u.pbm\n",prefijoSalida,j);
 	strcpy(nombreArchivoSalida,prefijoSalida);
 	strcat(nombreArchivoSalida,"_");
 	sprintf(buf, "%u", j);
 	strcat(nombreArchivoSalida,buf),
 	strcat(nombreArchivoSalida,".pbm");
-	printf("%s\n",nombreArchivoSalida);
-	printf("\n");
-	CrearArchivoOutput(nombreArchivoSalida,&archivoSalida);
-	//Grabar Encabezado de archivo
-	printf("Grabo P1\n");
-	fprintf(archivoSalida,"P1\n");
-	printf("Grabo M = %u y N = %u\n",M,N);
-	fprintf(archivoSalida,"%u %u\n",M,N);
-	printf("Empiezo con las filas\n");
-	//Recorrer Matriz y grabar archivo
-	for(a = 0;a < M;a++){
-		printf("grabo fila %u\n",a);
-			for(b = 0;b < N;b++) {
-				//Grabo posicion
-				printf("Posicion: (%u,%u) = %u\n",a,b,getPosicion(a,b,N));
-				fprintf(archivoSalida,"%u",matriz[getPosicion(a,b,N)]);
+	if(CrearArchivoOutput(nombreArchivoSalida,&archivoSalida) == 0){
+		printf("Grabando estado %s\n",nombreArchivoSalida);
+		//Grabar Encabezado de archivo
+		fprintf(archivoSalida,"P1\n");
+		fprintf(archivoSalida,"%u %u\n",M*16,N*16);
+		//Recorrer Matriz y grabar archivo
+		for(a = 0;a < M;a++){
+			for (d = 0; d < 16; d++){
+				for(b = 0;b < N;b++) {
+					//Grabo posicion
+					for (c = 0; c < 16; c++)
+						fprintf(archivoSalida,"%u",matriz[getPosicion(a,b,N)]);
+				}
+				fprintf(archivoSalida,"\n");
 			}
-			fprintf(archivoSalida,"\n");
+		}
 	}
 	//Cerrar archivo
 	CerrarArchivo(archivoSalida);
@@ -234,14 +221,11 @@ int main(int argc, char *argv[]) {
 	for(a = 0; a < M*N; a++){
 		matriz[a] = VACIO;
     }
-	/*matriz[getPosicion(1,2,N)] = NOVACIO;
-	matriz[getPosicion(2,2,N)] = NOVACIO;
-	matriz[getPosicion(3,2,N)] = NOVACIO;*/
 
 	//Cargar matriz con archivo de entrada, en caso de tener errores no seguir y cerrar puntero y borrar matriz.
 	cargarMatriz(matriz, fp, M, N);
 
-	imprimirMatriz(matriz,M,N);
+	//imprimirMatriz(matriz,M,N);
 	GrabarArchivoSalida(matriz,M,N,prefijoSalida,0);
 	//Recorro las iteraciones
     for(j = 0; j < i; j++){
@@ -269,8 +253,7 @@ int main(int argc, char *argv[]) {
     	}
     	free(matriz);
     	matriz = copia;
-    	printf("iteración %u\n",j+1);
-    	imprimirMatriz(matriz,M,N);
+    	//imprimirMatriz(matriz,M,N);
     	GrabarArchivoSalida(matriz,M,N,prefijoSalida,j+1);
     }
 	printf("Listo\r\n");
