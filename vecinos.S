@@ -20,10 +20,10 @@ vecinos:
 	sw		gp,GP(sp)
 	move	$fp,sp
 
-	sw		a0,16(sp) #matriz	Argument building area.
-	sw		a1,20(sp) #i
-	sw		a2,24(sp) #j
-	sw		a3,28(sp) #M
+	sw		a0,A(sp) #matriz	Argument building area.
+	sw		a1,I(sp) #i
+	sw		a2,J(sp) #j
+	sw		a3,M(sp) #M
 	#Asumo que N esta en 40(sp)
 	sw		zero,V(sp)	#Local and temporary area
 	li		v0,0
@@ -53,7 +53,7 @@ arribavacio:
 	addu	t1,t1, -1 #t1 = i-1
 	lw		t2, N(sp)
 	mul		t1,t2
-	mflo	t1
+	mflo	t1 #t1 = N*(i-1)
 	add		t0,t0,t1 #t0 = (i-1)*N+j-1
 	lw		t1, A(sp)
 	addu	t0,t1,t0 #t0 = direccion de a[(i-1)*N+j-1]
@@ -89,14 +89,14 @@ esprimerafila:
 	addu	t1,t1,-1 #t1 = M-1
 	beq		t0,t1,esultimafila
 	#chequeo abajo
-	addu	t0,t0,-1 #t0 = i + 1
+	addu	t0,t0,1 #t0 = i + 1
 	lw		t1,N(sp)
 	mul 	t0,t1 #lo = (i+1) * N
-	mflo 	t0
+	mflo 	t0 #t0 = (i+1) * N
 	lw		t2,J(sp)
 	add 	t0,t0,t2 # t0 = (i+1)*N+j
 	lw		t1, A(sp)
-	addu	t0,t1,t0 #t0 = direccion de a[(i-1)*N+j]
+	addu	t0,t1,t0 #t0 = direccion de a[(i+1)*N+j]
 	lbu		t2, 0(t0) #t2 = a[(i+1)*N+j]
 	li		t0, VACIO
 	beq 	t2,t0,abajovacio
@@ -112,13 +112,14 @@ abajovacio:
 	addu	t1,t1, 1 #t1 = i+1
 	lw		t2, N(sp)
 	mul		t1,t2
-	mflo	t1
+	mflo	t1 #t1 = (i+1)*N
 	add		t0,t0,t1 #t0 = (i+1)*N+j-1
 	lw		t1, A(sp)
 	addu	t0,t1,t0 #t0 = direccion de a[(i+1)*N+j-1]
 	lbu		t2, 0(t0) #t2 = a[(i+1)*N+j-1]
 	li		t1, VACIO
 	beq 	t2,t1,abajoizquierdavacio
+
 	lw		t0, V(sp)
 	addu	t0,t0,1
 	sw		t0, V(sp)
