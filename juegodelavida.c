@@ -224,6 +224,7 @@ int main(int argc, char *argv[]) {
 
 	//Cargar matriz con archivo de entrada, en caso de tener errores no seguir y cerrar puntero y borrar matriz.
 	cargarMatriz(matriz, fp, M, N);
+	//matriz[getPosicion(0,N-1,N)] = NOVACIO;
 
 	//imprimirMatriz(matriz,M,N);
 	GrabarArchivoSalida(matriz,M,N,prefijoSalida,0);
@@ -236,6 +237,8 @@ int main(int argc, char *argv[]) {
     			//Recorro los casilleros
     			v = vecinos(matriz, a, b, M, N);
     			pos = getPosicion(a,b,N);
+    			//printf("La posicion (%u,%u) tiene %u vecinos\n",a,b,v);
+    			//printf("%u | ",v);
     			copia[pos] = matriz[pos];
     			if(matriz[pos] == VACIO){
     				//Estaba muerta
@@ -250,6 +253,7 @@ int main(int argc, char *argv[]) {
     				}
     			}
     		}
+    		//printf("\n");
     	}
     	free(matriz);
     	matriz = copia;

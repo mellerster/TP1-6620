@@ -1,8 +1,8 @@
 #include <mips/regdef.h>
-	.align 2
 	.text
-	.globl	vecinos
-	.ent vecinos
+	.align	2
+	.global vecinos
+	.ent	vecinos
 #define V 0
 #define GP 8
 #define FP 12
@@ -12,184 +12,405 @@
 #define M 28
 #define N 32
 #ifndef VACIO
-	#define VACIO 0
+#define VACIO 0
 #endif
 vecinos:
-	subu 	sp,sp,16
-	sw		$fp,FP(sp)	#Saved Registers Area.
+	subu	sp,sp,16
+	sw		$fp,FP(sp)
 	sw		gp,GP(sp)
 	move	$fp,sp
 
-	sw		a0,A(sp) #matriz	Argument building area.
-	sw		a1,I(sp) #i
-	sw		a2,J(sp) #j
-	sw		a3,M(sp) #M
-	#Asumo que N esta en 40(sp)
-	sw		zero,V(sp)	#Local and temporary area
-	li		v0,0
+	sw		a0,A(sp)
+	sw		a1,I(sp)
+	sw		a2,J(sp)
+	sw		a3,M(sp)
+
+	sw		zero,V(sp)
+
 	lw		t0,I(sp)
-	beqz 	t0,esprimerafila
-	#si llego aca (i != 0)
-	addu	t0,t0,-1 #t0 = i - 1
-	lw		t1,N(sp)
-	mul 	t0,t1 #lo = (i-1) * N
-	mflo 	t0
-	lw		t2,J(sp)
-	add 	t0,t0,t2 # t0 = (i-1)*N+j
-	lw		t1, A(sp)
-	addu	t0,t1,t0 #t0 = direccion de a[(i-1)*N+j]
-	lbu		t2, 0(t0) #t2 = a[(i-1)*N+j]
-	li		t0, VACIO
-	beq 	t2,t0,arribavacio
-	lw		t0, V(sp)
+	beq		t0,zero,esprimerafila
+	lw		t0,I(sp)
+	addu	t1,t0,-1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,J(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	lbu		t0,0(t0)
+	beq		t0,zero,$L3
+	lw		t0,V(sp)
 	addu	t0,t0,1
-	sw		t0, V(sp)
-arribavacio:
-	lw		t0, J(sp)
-	beqz	t0,arribaizquierdavacio
-	# j != 0
-	addu	t0,t0,-1 #t0 = j-1
-	lw		t1, I(sp)
-	addu	t1,t1, -1 #t1 = i-1
-	lw		t2, N(sp)
-	mul		t1,t2
-	mflo	t1 #t1 = N*(i-1)
-	add		t0,t0,t1 #t0 = (i-1)*N+j-1
-	lw		t1, A(sp)
-	addu	t0,t1,t0 #t0 = direccion de a[(i-1)*N+j-1]
-	lbu		t2, 0(t0) #t2 = a[(i-1)*N+j-1]
-	li		t1, VACIO
-	beq 	t2,t1,arribaizquierdavacio
-	lw		t0, V(sp)
+	sw		t0,V(sp)
+$L3:
+	lw		t0,J(sp)
+	beq		t0,zero,$L4
+	lw		t0,I(sp)
+	addu	t1,t0,-1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,J(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,-1
+	lbu		t0,0(t0)
+	beq		t0,zero,$L6
+	lw		t0,V(sp)
 	addu	t0,t0,1
-	sw		t0, V(sp)
-arribaizquierdavacio:
-	lw		t0, J(sp)
-	lw		t1, N(sp)
-	addu	t1, t1, -1 # t1 = (N-1)
-	beq		t0,t1,esprimerafila
-	addu	t0,t0,1 #t0 = j+1
-	lw		t1, I(sp)
-	addu	t1,t1,-1 #t1 = i-1
-	lw		t2, N(sp) #t2 = N
-	mul		t1,t2
-	mflo	t1 #t1 = (i-1)*N
-	add		t0,t0,t1 #t0 = (i-1)*N+(j+1)
-	lw		t1, A(sp)
-	addu	t0,t1,t0 #t0 = direccion de a[(i-1)*N+j+1]
-	lbu		t2, 0(t0) #t2 = a[(i-1)*N+j+1]
-	li		t1, VACIO
-	beq 	t2,t1,esprimerafila
-	lw		t0, V(sp)
+	sw		t0,V(sp)
+	b		$L6
+$L4:
+	lw		t0,I(sp)
+	addu	t1,t0,-1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,N(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,-1
+	lbu		t0,0(t0)
+	beq		t0,zero,$L6
+	lw		t0,V(sp)
 	addu	t0,t0,1
-	sw		t0, V(sp)
+	sw		t0,V(sp)
+$L6:
+	lw		t0,N(sp)
+	addu	t1,t0,-1
+	lw		t0,J(sp)
+	beq		t0,t1,$L8
+	lw		t0,I(sp)
+	addu	t1,t0,-1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,J(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,1
+	lbu		t0,0(t0)
+	beq		t0,zero,verultimafila
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+	b	verultimafila
+$L8:
+	lw		t0,I(sp)
+	addu	t1,t0,-1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	lbu		t0,0(t0)
+	beq		t0,zero,verultimafila
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+	b		verultimafila
 esprimerafila:
+	lw		t0,M(sp)
+	addu	t1,t0,-1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,J(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	lbu		t0,0(t0)
+	beq		t0,zero,$L13
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+$L13:
+	lw		t0,J(sp)
+	beq		t0,zero,$L14
+	lw		t0,M(sp)
+	addu	t1,t0,-1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,J(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,-1
+	lbu		t0,0(t0)
+	beq		t0,zero,$L16
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+	b		$L16
+$L14:
+	lw		t0,M(sp)
+	addu	t1,t0,-1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,N(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,-1
+	lbu		t0,0(t0)
+	beq		t0,zero,$L16
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+$L16:
+	lw		t0,N(sp)
+	addu	t1,t0,-1
+	lw		t0,J(sp)
+	beq		t0,t1,$L18
+	lw		t0,M(sp)
+	addu	t1,t0,-1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,J(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,1
+	lbu		t0,0(t0)
+	beq		t0,zero,verultimafila
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+	b		verultimafila
+$L18:
+	lw		t0,M(sp)
+	addu	t1,t0,-1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	lbu		t0,0(t0)
+	beq		t0,zero,verultimafila
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+verultimafila:
+	lw		t0,M(sp)
+	addu	t1,t0,-1
 	lw		t0,I(sp)
-	lw		t1, M(sp)
-	addu	t1,t1,-1 #t1 = M-1
-	beq		t0,t1,esultimafila
-	#chequeo abajo
-	addu	t0,t0,1 #t0 = i + 1
-	lw		t1,N(sp)
-	mul 	t0,t1 #lo = (i+1) * N
-	mflo 	t0 #t0 = (i+1) * N
-	lw		t2,J(sp)
-	add 	t0,t0,t2 # t0 = (i+1)*N+j
-	lw		t1, A(sp)
-	addu	t0,t1,t0 #t0 = direccion de a[(i+1)*N+j]
-	lbu		t2, 0(t0) #t2 = a[(i+1)*N+j]
-	li		t0, VACIO
-	beq 	t2,t0,abajovacio
-	lw		t0, V(sp)
+	beq		t0,t1,verabajoultimafila
+	lw		t0,I(sp)
+	addu	t1,t0,1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,J(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	lbu		t0,0(t0)
+	beq		t0,zero,verabajoizqultfila
+	lw		t0,V(sp)
 	addu	t0,t0,1
-	sw		t0, V(sp)
-abajovacio:
-	#abajo a la izquierda
-	lw		t0, J(sp)
-	beqz	t0, abajoizquierdavacio
-	addu	t0,t0,-1 #t0 = j-1
-	lw		t1, I(sp)
-	addu	t1,t1, 1 #t1 = i+1
-	lw		t2, N(sp)
-	mul		t1,t2
-	mflo	t1 #t1 = (i+1)*N
-	add		t0,t0,t1 #t0 = (i+1)*N+j-1
-	lw		t1, A(sp)
-	addu	t0,t1,t0 #t0 = direccion de a[(i+1)*N+j-1]
-	lbu		t2, 0(t0) #t2 = a[(i+1)*N+j-1]
-	li		t1, VACIO
-	beq 	t2,t1,abajoizquierdavacio
+	sw		t0,V(sp)
+verabajoizqultfila:
+	lw		t0,J(sp)
+	beq		t0,zero,verabajoizqprimeracol
+	lw		t0,I(sp)
+	addu	t1,t0,1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,J(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,-1
+	lbu		t0,0(t0)
+	beq		t0,zero,verabajoderechaultfil
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+	b		verabajoderechaultfil
+verabajoizqprimeracol:
+	lw		t0,I(sp)
+	addu	t1,t0,1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,N(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,-1
+	lbu		t0,0(t0)
+	beq		t0,zero,verabajoderechaultfil
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+verabajoderechaultfil:
+	lw		t0,N(sp)
+	addu	t1,t0,-1
+	lw		t0,J(sp)
+	beq		t0,t1,verproximafilacol0
+	lw		t0,I(sp)
+	addu	t1,t0,1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,J(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,1
+	lbu		t0,0(t0)
+	beq		t0,zero,verizquierda
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+	b		verizquierda
+verproximafilacol0:
+	lw		t0,I(sp)
+	addu	t1,t0,1
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	lbu		t0,0(t0)
+	beq		t0,zero,verizquierda
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+	b		verizquierda
+verabajoultimafila:
+	lw		t1,A(sp)
+	lw		t0,J(sp)
+	addu	t0,t1,t0
+	lbu		t0,0(t0)
+	beq		t0,zero,vercerocolanterior
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+vercerocolanterior:
+	lw		t0,J(sp)
+	beq		t0,zero,verceroabajodetodo
+	lw		t1,A(sp)
+	lw		t0,J(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,-1
+	lbu		t0,0(t0)
+	beq		t0,zero,ultfilaabajoder
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+	b		ultfilaabajoder
+verceroabajodetodo:
+	lw		t1,A(sp)
+	lw		t0,N(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,-1
+	lbu		t0,0(t0)
+	beq		t0,zero,ultfilaabajoder
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+ultfilaabajoder:
+	lw		t0,N(sp)
+	addu	t1,t0,-1
+	lw		t0,J(sp)
+	beq		t0,t1,ver00
+	lw		t1,A(sp)
+	lw		t0,J(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,1
+	lbu		t0,0(t0)
+	beq		t0,zero,verizquierda
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+	b		verizquierda
+ver00:
+	lw		t0,A(sp)
+	lbu		t0,0(t0)
+	beq		t0,zero,verizquierda
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+verizquierda:
+	lw		t0,J(sp)
+	beq		t0,zero,izqprimeracol
+	lw		t1,I(sp)
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,J(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,-1
+	lbu		t0,0(t0)
+	beq		t0,zero,verderecha
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+	b		verderecha
+izqprimeracol:
+	lw		t1,I(sp)
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,N(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,-1
+	lbu		t0,0(t0)
+	beq		t0,zero,verderecha
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+verderecha:
+	lw		t0,N(sp)
+	addu	t1,t0,-1
+	lw		t0,J(sp)
+	beq		t0,t1,derultimafila
+	lw		t1,I(sp)
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,J(sp)
+	addu	t1,t1,t0
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	addu	t0,t0,1
+	lbu		t0,0(t0)
+	beq		t0,zero,finvecinos
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
+	b		finvecinos
+derultimafila:
+	lw		t1,I(sp)
+	lw		t0,N(sp)
+	mult	t1,t0
+	mflo	t1
+	lw		t0,A(sp)
+	addu	t0,t1,t0
+	lbu		t0,0(t0)
+	beq		t0,zero,finvecinos
+	lw		t0,V(sp)
+	addu	t0,t0,1
+	sw		t0,V(sp)
 
-	lw		t0, V(sp)
-	addu	t0,t0,1
-	sw		t0, V(sp)
-abajoizquierdavacio:
-	#abajo a la derecha
-	lw		t0, J(sp)
-	lw		t1, N(sp)
-	addu	t1, t1, -1 # t1 = (N-1)
-	beq		t0, t1, esultimafila
-	addu	t0,t0,1 #t0 = j+1
-	lw		t1, I(sp)
-	addu	t1,t1, 1 #t1 = i+1
-	lw		t2, N(sp)
-	mul		t1,t2
-	mflo	t1
-	add		t0,t0,t1 #t0 = (i+1)*N+j+1
-	lw		t1, A(sp)
-	addu	t0,t1,t0 #t0 = direccion de a[(i+1)*N+j+1]
-	lbu		t2, 0(t0) #t2 = a[(i+1)*N+j+1]
-	li		t1, VACIO
-	beq 	t2,t1,esultimafila
-	lw		t0, V(sp)
-	addu	t0,t0,1
-	sw		t0, V(sp)
-esultimafila:
-	#tiene izquierda?
-	lw		t0, J(sp)
-	beqz	t0, notieneizquierda
-	addu	t0,t0,-1 #t0 = j-1
-	lw		t1, I(sp) #t1 = i
-	lw		t2, N(sp)
-	mul		t1,t2
-	mflo	t1
-	add		t0,t0,t1 #t0 = (i*N)+j-1
-	lw		t1, A(sp)
-	addu	t0,t1,t0 #t0 = direccion de a[i*N+j-1]
-	lbu		t2, 0(t0) #t2 = a[i*N+j-1]
-	li		t1, VACIO
-	beq 	t2,t1,notieneizquierda
-	lw		t0, V(sp)
-	addu	t0,t0,1
-	sw		t0, V(sp)
-notieneizquierda:
-	#tienederecha?
-	lw		t0, J(sp)
-	lw		t1, N(sp)
-	addu	t1,t1,-1 #t1 = N-1
-	beq		t0,t1,finvecinos
-	addu	t0,t0,1 #t0 = j+1
-	lw		t1, I(sp) #t1 = i
-	lw		t2, N(sp)
-	mul		t1,t2
-	mflo	t1
-	add		t0,t0,t1 #t0 = (i*N)+j+1
-	lw		t1, A(sp)
-	addu	t0,t1,t0 #t0 = direccion de a[i*N+j+1]
-	lbu		t2, 0(t0) #t2 = a[i*N+j+1]
-	li		t1, VACIO
-	beq 	t2,t1,finvecinos
-	lw		t0, V(sp)
-	addu	t0,t0,1
-	sw		t0, V(sp)
-	j finvecinos
 finvecinos:
-	lw		v0, V(sp)
-	#vacio el stack
+	lw		v0,V(sp)
+	move	sp,$fp
 	lw		$fp,FP(sp)
-	lw  	gp,GP(sp)
-
+	lw		gp,GP(sp)
 	addu	sp,sp,16
-	jr		ra
-
-	.end	vecinos
+	j		ra
+.end vecinos
