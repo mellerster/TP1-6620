@@ -7,6 +7,7 @@
 #define GP 8
 #define FP 12
 #define A 16
+
 #define I 20
 #define J 24
 #define M 28
@@ -15,6 +16,7 @@
 #define VACIO 0
 #endif
 vecinos:
+	#ABI
 	subu	sp,sp,16
 	sw		$fp,FP(sp)
 	sw		gp,GP(sp)
@@ -26,9 +28,10 @@ vecinos:
 	sw		a3,M(sp)
 
 	sw		zero,V(sp)
-
+	#Empieza la función
 	lw		t0,I(sp)
 	beq		t0,zero,esprimerafila
+	# i != 0
 	lw		t0,I(sp)
 	addu	t1,t0,-1
 	lw		t0,N(sp)
@@ -38,14 +41,14 @@ vecinos:
 	addu	t1,t1,t0
 	lw		t0,A(sp)
 	addu	t0,t1,t0
-	lbu		t0,0(t0)
-	beq		t0,zero,$L3
+	lbu		t0,0(t0) #t0 = a[(i-1)*N+j]
+	beq		t0,zero,verarrizq
 	lw		t0,V(sp)
 	addu	t0,t0,1
 	sw		t0,V(sp)
-$L3:
+verarrizq:
 	lw		t0,J(sp)
-	beq		t0,zero,$L4
+	beq		t0,zero,verarrizqprimcol
 	lw		t0,I(sp)
 	addu	t1,t0,-1
 	lw		t0,N(sp)
@@ -56,13 +59,13 @@ $L3:
 	lw		t0,A(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,-1
-	lbu		t0,0(t0)
-	beq		t0,zero,$L6
+	lbu		t0,0(t0) #t0 = a[(i-1)*N+j-1]
+	beq		t0,zero,verarrder
 	lw		t0,V(sp)
 	addu	t0,t0,1
 	sw		t0,V(sp)
-	b		$L6
-$L4:
+	b		verarrder
+verarrizqprimcol:
 	lw		t0,I(sp)
 	addu	t1,t0,-1
 	lw		t0,N(sp)
@@ -73,16 +76,16 @@ $L4:
 	lw		t0,A(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,-1
-	lbu		t0,0(t0)
-	beq		t0,zero,$L6
+	lbu		t0,0(t0) #t0 = a[(i-1)*N+N-1]
+	beq		t0,zero,verarrder
 	lw		t0,V(sp)
 	addu	t0,t0,1
 	sw		t0,V(sp)
-$L6:
+verarrder:
 	lw		t0,N(sp)
 	addu	t1,t0,-1
 	lw		t0,J(sp)
-	beq		t0,t1,$L8
+	beq		t0,t1,verarrderultcol
 	lw		t0,I(sp)
 	addu	t1,t0,-1
 	lw		t0,N(sp)
@@ -93,13 +96,13 @@ $L6:
 	lw		t0,A(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,1
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[(i-1)*N+j+1]
 	beq		t0,zero,verultimafila
 	lw		t0,V(sp)
 	addu	t0,t0,1
 	sw		t0,V(sp)
 	b	verultimafila
-$L8:
+verarrderultcol:
 	lw		t0,I(sp)
 	addu	t1,t0,-1
 	lw		t0,N(sp)
@@ -107,7 +110,7 @@ $L8:
 	mflo	t1
 	lw		t0,A(sp)
 	addu	t0,t1,t0
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[(i-1)*N]
 	beq		t0,zero,verultimafila
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -123,14 +126,14 @@ esprimerafila:
 	addu	t1,t1,t0
 	lw		t0,A(sp)
 	addu	t0,t1,t0
-	lbu		t0,0(t0)
-	beq		t0,zero,$L13
+	lbu		t0,0(t0) #t0 = a[(M-1)*N+j]
+	beq		t0,zero,verarribaizqpf
 	lw		t0,V(sp)
 	addu	t0,t0,1
 	sw		t0,V(sp)
-$L13:
+verarribaizqpf:
 	lw		t0,J(sp)
-	beq		t0,zero,$L14
+	beq		t0,zero,verarribaizqprimcolprimfila
 	lw		t0,M(sp)
 	addu	t1,t0,-1
 	lw		t0,N(sp)
@@ -141,13 +144,13 @@ $L13:
 	lw		t0,A(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,-1
-	lbu		t0,0(t0)
-	beq		t0,zero,$L16
+	lbu		t0,0(t0) #t0 = a[(M-1)*N+j-1]
+	beq		t0,zero,verarribaderpf
 	lw		t0,V(sp)
 	addu	t0,t0,1
 	sw		t0,V(sp)
-	b		$L16
-$L14:
+	b		verarribaderpf
+verarribaizqprimcolprimfila:
 	lw		t0,M(sp)
 	addu	t1,t0,-1
 	lw		t0,N(sp)
@@ -158,16 +161,16 @@ $L14:
 	lw		t0,A(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,-1
-	lbu		t0,0(t0)
-	beq		t0,zero,$L16
+	lbu		t0,0(t0) #t0 = a[(M-1)*N+N-1]
+	beq		t0,zero,verarribaderpf
 	lw		t0,V(sp)
 	addu	t0,t0,1
 	sw		t0,V(sp)
-$L16:
+verarribaderpf:
 	lw		t0,N(sp)
 	addu	t1,t0,-1
 	lw		t0,J(sp)
-	beq		t0,t1,$L18
+	beq		t0,t1,verarribaderultcolpf
 	lw		t0,M(sp)
 	addu	t1,t0,-1
 	lw		t0,N(sp)
@@ -178,13 +181,13 @@ $L16:
 	lw		t0,A(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,1
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[(M-1)*N+j+1]
 	beq		t0,zero,verultimafila
 	lw		t0,V(sp)
 	addu	t0,t0,1
 	sw		t0,V(sp)
 	b		verultimafila
-$L18:
+verarribaderultcolpf:
 	lw		t0,M(sp)
 	addu	t1,t0,-1
 	lw		t0,N(sp)
@@ -192,7 +195,7 @@ $L18:
 	mflo	t1
 	lw		t0,A(sp)
 	addu	t0,t1,t0
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[(M-1)*N]
 	beq		t0,zero,verultimafila
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -211,7 +214,7 @@ verultimafila:
 	addu	t1,t1,t0
 	lw		t0,A(sp)
 	addu	t0,t1,t0
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[(i+1)*N+j]
 	beq		t0,zero,verabajoizqultfila
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -229,7 +232,7 @@ verabajoizqultfila:
 	lw		t0,A(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,-1
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[(i+1)*N+(j-1)]
 	beq		t0,zero,verabajoderechaultfil
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -246,7 +249,7 @@ verabajoizqprimeracol:
 	lw		t0,A(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,-1
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[(i+1)*N+(N-1)]
 	beq		t0,zero,verabajoderechaultfil
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -266,7 +269,7 @@ verabajoderechaultfil:
 	lw		t0,A(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,1
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[(i+1)*N+(j+1)]
 	beq		t0,zero,verizquierda
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -280,7 +283,7 @@ verproximafilacol0:
 	mflo	t1
 	lw		t0,A(sp)
 	addu	t0,t1,t0
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[(i+1)*N]
 	beq		t0,zero,verizquierda
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -290,7 +293,7 @@ verabajoultimafila:
 	lw		t1,A(sp)
 	lw		t0,J(sp)
 	addu	t0,t1,t0
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[j]
 	beq		t0,zero,vercerocolanterior
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -302,7 +305,7 @@ vercerocolanterior:
 	lw		t0,J(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,-1
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[j-1]
 	beq		t0,zero,ultfilaabajoder
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -313,7 +316,7 @@ verceroabajodetodo:
 	lw		t0,N(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,-1
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[N-1]
 	beq		t0,zero,ultfilaabajoder
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -327,7 +330,7 @@ ultfilaabajoder:
 	lw		t0,J(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,1
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[j+1]
 	beq		t0,zero,verizquierda
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -335,7 +338,7 @@ ultfilaabajoder:
 	b		verizquierda
 ver00:
 	lw		t0,A(sp)
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #to = a[0]
 	beq		t0,zero,verizquierda
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -352,7 +355,7 @@ verizquierda:
 	lw		t0,A(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,-1
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[i*N+(j-1)]
 	beq		t0,zero,verderecha
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -368,7 +371,7 @@ izqprimeracol:
 	lw		t0,A(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,-1
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[i*N+(N-1)]
 	beq		t0,zero,verderecha
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -387,7 +390,7 @@ verderecha:
 	lw		t0,A(sp)
 	addu	t0,t1,t0
 	addu	t0,t0,1
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[i*N+(j+1)]
 	beq		t0,zero,finvecinos
 	lw		t0,V(sp)
 	addu	t0,t0,1
@@ -400,7 +403,7 @@ derultimafila:
 	mflo	t1
 	lw		t0,A(sp)
 	addu	t0,t1,t0
-	lbu		t0,0(t0)
+	lbu		t0,0(t0) #t0 = a[i*N]
 	beq		t0,zero,finvecinos
 	lw		t0,V(sp)
 	addu	t0,t0,1

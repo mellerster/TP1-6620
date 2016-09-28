@@ -1,8 +1,3 @@
-# Makefile de ejemplo para C/C++
-# Creado: 15/04/2004 - Leandro Lucarella
-# Modificado: 01/09/2016 - Pablo Roca
-# Copyleft 2004 - Leandro Lucarella, Bajo licencia GPL [http://www.gnu.org/]
-
 # CONFIGURACION
 ################
 

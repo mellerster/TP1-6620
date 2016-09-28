@@ -29,20 +29,6 @@ unsigned int getPosicion(unsigned int i, unsigned int j, unsigned int N){
 	return i*N+j;
 }
 
-void imprimirMatriz(unsigned char *matriz,unsigned int M,unsigned int N){
-	unsigned int i = 0, j = 0, pos = 0;
-	for (i = 0; i < M; i++){
-		for (j = 0; j < N; j++){
-			pos = getPosicion(i,j,N);
-			printf(" %c ",(matriz[pos] == VACIO ? 'x' : 'o'));
-			if(j != (N-1)){
-				printf("|");
-			}
-		}
-		printf("\n");
-	}
-}
-
 void MostrarUso(){
 	printf("Uso:\n");
 	printf(" conway -h\n conway -V\n conway i M N inputfile [-o outputprefix]\n");
@@ -86,7 +72,6 @@ void GrabarArchivoSalida(unsigned char *matriz, unsigned int M, unsigned int N, 
 			}
 		}
 	}
-	//Cerrar archivo
 	CerrarArchivo(archivoSalida);
 }
 
@@ -149,6 +134,7 @@ int main(int argc, char *argv[]) {
     char* prefijoSalida;
     FILE *fp;
     unsigned char* matriz;
+    //Lectura y carga de argumentos
     if (argc < 5){
     	if(argc == 2){
     		if (strcmp(argv[1],"-V") == 0|| strcmp(argv[1],"--version") == 0) {
@@ -190,7 +176,7 @@ int main(int argc, char *argv[]) {
 		MostrarUso();
 		return 1;
     }
-
+    //Argumentos opcionales
 	prefijoSalida = argv[4];
 	if(argc == 7){
 		if(strcmp(argv[5],"-o") == 0){
@@ -207,13 +193,13 @@ int main(int argc, char *argv[]) {
 			return 1;
 		}
 	}
+	//Carga inicial
 	n = AbrirArchivo(argv[4], &fp);
 	if(n == 1){
 		//No se pudo abrir el archivo
 		fprintf(stderr, "El archivo %s no pudo ser abierto.\r\n", argv[4]);
 		return 1;
 	}
-	// Fin validaciones
 
 	// Creo matriz
 	matriz = malloc(M*N*sizeof(unsigned char));
@@ -222,23 +208,19 @@ int main(int argc, char *argv[]) {
 		matriz[a] = VACIO;
     }
 
-	//Cargar matriz con archivo de entrada, en caso de tener errores no seguir y cerrar puntero y borrar matriz.
+	//Cargar matriz con archivo de entrada
+	printf("%s/n","Leyendo estado inicial...");
 	cargarMatriz(matriz, fp, M, N);
-	//matriz[getPosicion(0,N-1,N)] = NOVACIO;
 
-	//imprimirMatriz(matriz,M,N);
 	GrabarArchivoSalida(matriz,M,N,prefijoSalida,0);
 	//Recorro las iteraciones
     for(j = 0; j < i; j++){
     	unsigned char* copia = malloc(M*N*sizeof(unsigned char));
-        //Vivir
     	for	(a = 0; a < M; a++){
     		for(b = 0; b < N; b++){
     			//Recorro los casilleros
     			v = vecinos(matriz, a, b, M, N);
     			pos = getPosicion(a,b,N);
-    			//printf("La posicion (%u,%u) tiene %u vecinos\n",a,b,v);
-    			//printf("%u | ",v);
     			copia[pos] = matriz[pos];
     			if(matriz[pos] == VACIO){
     				//Estaba muerta
@@ -248,16 +230,14 @@ int main(int argc, char *argv[]) {
     			} else {
     				//Estaba viva
     				if (v < 2 || v > 3){
-    					//muere
+    					//Muere
     					copia[pos] = VACIO;
     				}
     			}
     		}
-    		//printf("\n");
     	}
     	free(matriz);
     	matriz = copia;
-    	//imprimirMatriz(matriz,M,N);
     	GrabarArchivoSalida(matriz,M,N,prefijoSalida,j+1);
     }
 	printf("Listo\r\n");
