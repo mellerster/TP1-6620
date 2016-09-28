@@ -18,6 +18,13 @@
 \usepackage{lastpage}
 \usepackage{fancyhdr}
 \usepackage{pdfpages}
+\usepackage{xcolor}
+\usepackage{listings}
+\lstset{basicstyle=\ttfamily,
+  showstringspaces=false,
+  commentstyle=\color{red},
+  keywordstyle=\color{blue}
+}
 \usepackage[pdfborder={0 0 0}]{hyperref}
 
 
@@ -80,10 +87,38 @@ Realizamos el Juego de la Vida de Conway descripto en el enunciado, realizamos u
 \section{Diseño e Implementación del programa}
 
 \subsection{Diseño}
-En la tabla~\ref{tab001} se muestra un ejemplo de cómo se insertan las mismas en un documento \TeX{} / \LaTeX{}.
+
+\subsubsection{Universo}
+
+Al principio habiamos creado la función vecinos para que tome el universo restringido, luego de hablar con el profesor decidimos tomar la teoría del universo infinito (toroidal) que es la que quedo finalmente en el programa.
+
+\subsubsection{Programa Principal}
+
+El programa principal tiene llamadas a varios métodos responsables de abrir, guardar, leer y cerrar archivos, buscar una posicición dentro de la matriz, imprimir mensajes, etc. La mayor parte del código se realizo en una función  (main) y en un solo archivo (juegodelavida.c) dado que el objetivo principal era conectarse con la función \textbf{\textit{vecinos}}
+
+\subsubsection{Función Vecinos}
+
+Se decidio que para esta función solo se utilizaría una variable ``v'' que iría acumulando la cantidad de vecinos de la casilla enviada.
 
 \subsection{Implementación}
 
+\subsubsection{Compilación}
+
+Para realizar la compilación de manera mas sencilla usamos un archivo de Makefile para usar junto a la herramienta \textit{make} o \textit{gmake}
+
+\begin{lstlisting}[language=bash,title={Compilación para usar la función en C}]
+
+$ gmake -f Makefile
+
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash,title={Compilación para usar la función en MIPS32}]
+
+$ gmake -f Makefile asm
+
+\end{lstlisting}
+
+Ambos dejan un programa compilado llamado \textbf{conway} que se puede invocar como dice el enunciado.
 
 \subsection{Función Vecinos}
 
@@ -91,7 +126,7 @@ En la tabla~\ref{tab001} se muestra un ejemplo de cómo se insertan las mismas en
 \begin{center}
 \begin{tabular}{|c|c|c|}
 \hline
-ABI & Tamaño & Guarda \\
+ABI & Tamaño (B) & Guarda \\
 \hline
 \multirow{2}{*}{SRA} & \multirow{2}{*}{8} & fp \\\cline{3-3}
 & & gp \\
@@ -102,7 +137,7 @@ ABI & Tamaño & Guarda \\
 \end{tabular}
 \end{center}
 
-El total del stack a reservar es de 16 Mb
+El total del stack a reservar es de 16 Bytes
 
 \subsubsection{Parámetros de la función}
 Sabemos que en las posiciones 16,20,24,28 y 32 tenemos los 5 parámetros de la función
@@ -130,11 +165,9 @@ Posición & Guarda \\
 \section{Corridas de prueba}
 
 \subsection{Glider}
+
 \begin{center}
-
-
 \begin{tabular}{ c | c }
-
 \includegraphics[scale=0.25]{glider_0.png}  & \includegraphics[scale=0.25]{glider_1.png}  \\
 glider\_0.pbm	& glider\_1.pbm \\
 \includegraphics[scale=0.25]{glider_2.png}  & \includegraphics[scale=0.25]{glider_3.png}  \\
@@ -153,17 +186,44 @@ glider\_10.pbm	&  \\
 
 \subsection{Pento}
 
+\begin{center}
+\begin{tabular}{ c | c }
+\includegraphics[scale=0.25]{pento_0.png}  & \includegraphics[scale=0.25]{pento_1.png}  \\
+pento\_0.pbm	& pento\_1.pbm \\
+\includegraphics[scale=0.25]{pento_2.png}  & \includegraphics[scale=0.25]{pento_3.png}  \\
+pento\_2.pbm	& pento\_3.pbm \\
+\includegraphics[scale=0.25]{pento_4.png}  & \includegraphics[scale=0.25]{pento_5.png}  \\
+pento\_4.pbm	& pento\_5.pbm \\
+\includegraphics[scale=0.25]{pento_6.png}  & \includegraphics[scale=0.25]{pento_7.png}  \\
+pento\_6.pbm	& pento\_7.pbm \\
+\includegraphics[scale=0.25]{pento_8.png}  & \includegraphics[scale=0.25]{pento_9.png}  \\
+pento\_8.pbm	& pento\_9.pbm \\
+\includegraphics[scale=0.25]{pento_10.png}  & \\
+pento\_10.pbm	&  \\
+\end{tabular}
+\end{center}
+
 
 \subsection{Sapo}
 
-
-% Inclusión de una imagen en formato EPS (Encapsulated Postscript).
-\begin{figure}[!htp]
 \begin{center}
-%\includegraphics[width=0.5\textwidth]{fig001.eps}
+\begin{tabular}{ c | c }
+\includegraphics[scale=0.25]{sapo_0.png}  & \includegraphics[scale=0.25]{sapo_1.png}  \\
+sapo\_0.pbm	& sapo\_1.pbm \\
+\includegraphics[scale=0.25]{sapo_2.png}  & \includegraphics[scale=0.25]{sapo_3.png}  \\
+sapo\_2.pbm	& sapo\_3.pbm \\
+\includegraphics[scale=0.25]{sapo_4.png}  & \includegraphics[scale=0.25]{sapo_5.png}  \\
+sapo\_4.pbm	& sapo\_5.pbm \\
+\includegraphics[scale=0.25]{sapo_6.png}  & \includegraphics[scale=0.25]{sapo_7.png}  \\
+sapo\_6.pbm	& sapo\_7.pbm \\
+\includegraphics[scale=0.25]{sapo_8.png}  & \includegraphics[scale=0.25]{sapo_9.png}  \\
+sapo\_8.pbm	& sapo\_9.pbm \\
+\includegraphics[scale=0.25]{sapo_10.png}  & \\
+sapo\_10.pbm	&  \\
+\end{tabular}
 \end{center}
-\caption{Facultad de Ingeniería $-$ Universidad de Buenos Aires.} \label{fig001}
-\end{figure}
+
+Todas las imagenes dieron igual tanto para el programa con la función en C como en MIPS, cosa que esperabamos.
 
 \section{Código Fuente}
 
