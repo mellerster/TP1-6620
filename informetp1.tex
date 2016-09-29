@@ -115,15 +115,15 @@ $ a[i][j] = a[i*N+j] $
 
 \subsubsection{Stack para la ABI}
 \begin{center}
-\begin{tabular}{|c|c|c|}
+\begin{tabular}{|c|c|c|c|}
 \hline
-ABI & Tamaño (B) & Guarda \\
+ABI & Tamaño (B) & Guarda & Posición \\
 \hline
-\multirow{2}{*}{SRA} & \multirow{2}{*}{8} & fp \\\cline{3-3}
-& & gp \\
+\multirow{2}{*}{SRA} & \multirow{2}{*}{8} & fp & 12 \\\cline{3-4}
+& & gp & 8 \\
 \hline
-\multirow{2}{*}{LTA} & \multirow{2}{*}{8} & PADDING \\\cline{3-3}
-& & V \\
+\multirow{2}{*}{LTA} & \multirow{2}{*}{8} & PADDING & 4\\\cline{3-4}
+& & V & 0\\
 \hline
 \end{tabular}
 \end{center}
@@ -131,7 +131,7 @@ ABI & Tamaño (B) & Guarda \\
 El total del stack a reservar es de 16 Bytes
 
 \subsubsection{Parámetros de la función (ABA)}
-Sabemos que en las posiciones 16,20,24,28 y 32 tenemos los 5 parámetros de la función, que es el ABA de la función llamadora a \emph{vecinos}
+Sabemos que en las posiciones superioras al 16 del stack tenemos los 5 parámetros de la función, que es el ABA de la función llamadora a \emph{vecinos}
 
 \begin{center}
 \begin{tabular}{|c|c|}
@@ -175,7 +175,9 @@ Ambos dejan un programa ejecutable llamado \textbf{conway} que se puede invocar 
 
 Se decidio utilizar el formato \emph{Plain PBM} para los archivos de salida, aunque de que ocupen mas espacio, dado que es mas sencillo de grabar y revisar su contenido. Este formato utiliza un byte por pixel donde se envia el byte $1$ si el pixel es negro o un byte en $0$ si el pixel es blanco.
 
-Se decidio guardar cada celula del juego de la vida como un cuadrado de 16x16 pixeles, como sugería el enunciado, así es mas sencillo verlo en el archivo generado.
+Se eligió una celula viva de color negro y una celula muerta de color blanco y no como especificaba el enunciado para que sea más llamativo a la vista el dibujo y no contraste con el fondo.
+
+Se decidió guardar cada celula del juego de la vida como un cuadrado de 16x16 pixeles, como sugería el enunciado, así es mas sencillo verlo en el archivo generado.
 
 \section{Corridas de prueba}
 
@@ -246,7 +248,11 @@ Todas las imagenes dieron igual tanto para el programa con la función en C como 
 
 \section{Conclusiones}
 
-Se presentó un modelo para que los alumnos puedan tomar como referencia en la redacción de sus informes de trabajos prácticos.
+Una de las cosas que más nos complico fue que en la función en MIPS32 no sabiamos que habia que agregar el .end y el .global para que pueda compilar, eso nos fue ayudando internet y el compilador a la hora de encontrar los errores.
+
+Otra cosa interesante que en C llamar una posición de una matriz o vector nos resulta sencillo pero en MIPS32 hay que hacer mas de un paso para ello.
+
+Menos dificil pero a la vez muy importante al programar en MIPS32 fue que tuvimos que definir muchos rotulos para los saltos, cosa que en C hacemos los ifs/else de manera muy simple y teniamos que ponernos a pensar los nombres de los saltos que no hayamos utilizado ya y que los mismos sean descriptivos de donde saltabamos para saber que iba a hacer y que no nos salteemos nada.
 
 
 % Citas bibliográficas.
