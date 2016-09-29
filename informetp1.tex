@@ -86,41 +86,32 @@ Realizamos el Juego de la Vida de Conway descripto en el enunciado, realizamos u
 
 \section{Diseño e Implementación del programa}
 
-\subsection{Diseño}
 
-\subsubsection{Universo}
+\subsection{Universo}
 
 Al principio habiamos creado la función vecinos para que tome el universo restringido, luego de hablar con el profesor decidimos tomar la teoría del universo infinito (toroidal) que es la que quedo finalmente en el programa.
 
-\subsubsection{Programa Principal}
+\subsection{Programa Principal}
 
 El programa principal tiene llamadas a varios métodos responsables de abrir, guardar, leer y cerrar archivos, buscar una posicición dentro de la matriz, imprimir mensajes, etc. La mayor parte del código se realizo en una función  (main) y en un solo archivo (juegodelavida.c) dado que el objetivo principal era conectarse con la función \textbf{\textit{vecinos}}
 
-\subsubsection{Función Vecinos}
 
-Se decidio que para esta función solo se utilizaría una variable ``v'' que iría acumulando la cantidad de vecinos de la casilla enviada.
+\subsection{Errores}
 
-\subsection{Implementación}
+El programa valida tanto los parámetros enviados como el archivo de entrada, si hay un error imprime el mismo en el stderr y aborta la ejecución del programa retornando $1$.
 
-\subsubsection{Compilación}
+Además si el problema es de la cantidad de parámetros el programa muestra la ayuda de como utilizarlo, así como llamar al programa como la opción -h
 
-Para realizar la compilación de manera mas sencilla usamos un archivo de Makefile para usar junto a la herramienta \textit{make} o \textit{gmake}
-
-\begin{lstlisting}[language=bash,title={Compilación para usar la función en C}]
-
-$ gmake -f Makefile
-
-\end{lstlisting}
-
-\begin{lstlisting}[language=bash,title={Compilación para usar la función en MIPS32}]
-
-$ gmake -f Makefile asm
-
-\end{lstlisting}
-
-Ambos dejan un programa compilado llamado \textbf{conway} que se puede invocar como dice el enunciado.
 
 \subsection{Función Vecinos}
+
+Se decidio que para esta función solo se utilizaría una variable ``v'' (\emph{unsigned int}) que iría acumulando la cantidad de vecinos de la casilla enviada para despues devolverla. Las posiciones serán calculadas a partir de los parametros enviados.
+
+Para obtener una ubicación de la matriz se utilizo la siguiente formula
+
+\begin{center}
+$ a[i][j] = a[i*N+j] $
+\end{center}
 
 \subsubsection{Stack para la ABI}
 \begin{center}
@@ -139,8 +130,8 @@ ABI & Tamaño (B) & Guarda \\
 
 El total del stack a reservar es de 16 Bytes
 
-\subsubsection{Parámetros de la función}
-Sabemos que en las posiciones 16,20,24,28 y 32 tenemos los 5 parámetros de la función
+\subsubsection{Parámetros de la función (ABA)}
+Sabemos que en las posiciones 16,20,24,28 y 32 tenemos los 5 parámetros de la función, que es el ABA de la función llamadora a \emph{vecinos}
 
 \begin{center}
 \begin{tabular}{|c|c|}
@@ -161,6 +152,30 @@ Posición & Guarda \\
 \hline
 \end{tabular}
 \end{center}
+
+\subsection{Compilación}
+
+Para realizar la compilación de manera mas sencilla usamos un archivo de Makefile para usar junto a la herramienta \textit{make} o \textit{gmake}
+
+\begin{lstlisting}[language=bash,title={Compilación para usar la función en C}]
+
+$ gmake -f Makefile
+
+\end{lstlisting}
+
+\begin{lstlisting}[language=bash,title={Compilación para usar la función en MIPS32}]
+
+$ gmake -f Makefile asm
+
+\end{lstlisting}
+
+Ambos dejan un programa ejecutable llamado \textbf{conway} que se puede invocar como dice el enunciado.
+
+\subsection{Archivos de Salida}
+
+Se decidio utilizar el formato \emph{Plain PBM} para los archivos de salida, aunque de que ocupen mas espacio, dado que es mas sencillo de grabar y revisar su contenido. Este formato utiliza un byte por pixel donde se envia el byte $1$ si el pixel es negro o un byte en $0$ si el pixel es blanco.
+
+Se decidio guardar cada celula del juego de la vida como un cuadrado de 16x16 pixeles, como sugería el enunciado, así es mas sencillo verlo en el archivo generado.
 
 \section{Corridas de prueba}
 
