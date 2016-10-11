@@ -146,7 +146,7 @@ int main(int argc, char *argv[]) {
     if (argc < 5){
     	if(argc == 2){
     		if (strcmp(argv[1],"-V") == 0|| strcmp(argv[1],"--version") == 0) {
-    			printf("Version 1.0\n");
+    			printf("Version 2.0\n");
     			return 0;
     		} else if (strcmp(argv[1],"-h") == 0|| strcmp(argv[1],"--help") == 0) {
     			MostrarUso();
