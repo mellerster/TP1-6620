@@ -38,6 +38,7 @@ CSTD = c99
 
 # VARIABLES CALCULADAS A PARTIR DE LA CONFIGURACION
 ####################################################
+LDFLAGS += -lm
 
 CFLAGS += -std=$(CSTD)
 LD = $(CC)

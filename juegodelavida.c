@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "vecinos.h"
+#include <math.h>
 #ifndef VACIO
 #define VACIO 0
 #endif
@@ -48,8 +49,14 @@ void InvocacionIncorrecta(){
 void GrabarArchivoSalida(unsigned char *matriz, unsigned int M, unsigned int N, char *prefijoSalida, unsigned int j) {
 	unsigned int a = 0, b = 0,c = 0, d = 0;
 	FILE *archivoSalida;
-	char nombreArchivoSalida[50];
+	int nDigits;
 	char buf[5];
+	if(j > 0)
+		nDigits = floor(log10(j)) + 1;
+	else
+		nDigits = 1;
+
+	char *nombreArchivoSalida = malloc(strlen(prefijoSalida)+(sizeof(char)*5)+sizeof(char)*nDigits);
 	strcpy(nombreArchivoSalida,prefijoSalida);
 	strcat(nombreArchivoSalida,"_");
 	sprintf(buf, "%u", j);
@@ -73,6 +80,7 @@ void GrabarArchivoSalida(unsigned char *matriz, unsigned int M, unsigned int N, 
 		}
 	}
 	CerrarArchivo(archivoSalida);
+	free(nombreArchivoSalida);
 }
 
 void abortarCargaMatriz(char* mensaje, unsigned char* matriz, FILE* archivo) {
