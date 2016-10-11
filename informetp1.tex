@@ -37,7 +37,7 @@
 
 % Paquete para definir el idioma usado.
 \usepackage[spanish]{babel}
-
+\usepackage{hyperref}
 \pagestyle{fancy}
 \lhead{Trabajo práctico 1}
 \cfoot{Página \thepage~de \pageref{LastPage}}
@@ -49,7 +49,7 @@
 % Información sobre los autores.
 \author{	Tomas Franco, \textit{Padrón Nro. 91.013}                     \\
             \texttt{ tomasnfranco@gmail.com }                                             \\
-            Diego Meler, \textit{Padrón Nro. 91.299}                     \\
+            Diego Meller, \textit{Padrón Nro. 91.299}                     \\
             \texttt{ dmeller@fi.uba.ar }                                              \\[2.5ex]
             \normalsize{Grupo Nro.  \ \ \  - 2do. Cuatrimestre de 2016}                       \\
             \normalsize{66.20 Organización de Computadoras}                             \\
@@ -69,7 +69,7 @@
 
 % Resumen
 \begin{abstract}
-Realizamos el Juego de la Vida de Conway descripto en el enunciado, realizamos un Makefile para diferenciar las compilaciones con la función de vecinos en C y en MIPS32, elegimos como modelo de universo Toroidal y los archivos de salida fueron realizados en el formato Plain PBM
+Realizamos el Juego de la Vida de Conway\cite{CONWAY} descripto en el enunciado, realizamos un Makefile\cite{MAKEFILE} para diferenciar las compilaciones con la función de vecinos en C y en MIPS32, elegimos como modelo de universo Toroidal y los archivos de salida fueron realizados en el formato Plain PBM\cite{PBM}
 \end{abstract}
 
 \newpage
@@ -155,7 +155,7 @@ Posición & Guarda \\
 
 \subsection{Compilación}
 
-Para realizar la compilación de manera mas sencilla usamos un archivo de Makefile para usar junto a la herramienta \textit{make} o \textit{gmake}
+Para realizar la compilación de manera mas sencilla usamos un archivo de Makefile\cite{MAKEFILE} para usar junto a la herramienta \textit{make}\cite{MAKE} o \textit{gmake}\cite{GMAKE}
 
 \begin{lstlisting}[language=bash,title={Compilación para usar la función en C}]
 
@@ -173,7 +173,7 @@ Ambos dejan un programa ejecutable llamado \textbf{conway} que se puede invocar 
 
 \subsection{Archivos de Salida}
 
-Se decidio utilizar el formato \emph{Plain PBM} para los archivos de salida, aunque de que ocupen mas espacio, dado que es mas sencillo de grabar y revisar su contenido. Este formato utiliza un byte por pixel donde se envia el byte $1$ si el pixel es negro o un byte en $0$ si el pixel es blanco.
+Se decidio utilizar el formato \emph{Plain PBM}\cite{PBM} para los archivos de salida, aunque de que ocupen mas espacio, dado que es mas sencillo de grabar y revisar su contenido. Este formato utiliza un byte por pixel donde se envia el byte $1$ si el pixel es negro o un byte en $0$ si el pixel es blanco.
 
 Se eligió una celula viva de color negro y una celula muerta de color blanco y no como especificaba el enunciado para que sea más llamativo a la vista el dibujo y no contraste con el fondo.
 
@@ -257,6 +257,15 @@ Menos dificil pero a la vez muy importante al programar en MIPS32 fue que tuvimo
 
 % Citas bibliográficas.
 \begin{thebibliography}{99}
+\bibitem{CONWAY} Juego de la Vida de Conway, \url{http://es.wikipedia.org/wiki/Juego_de_la_vida}
+
+\bibitem{MAKEFILE} \url{https://en.wikipedia.org/wiki/Makefile}
+
+\bibitem{PBM} \url{http://netpbm.sourceforge.net/doc/pbm.html}
+
+\bibitem{MAKE} \url{https://www.gnu.org/software/make/manual/make.html}
+
+\bibitem{GMAKE} \url{https://linux.die.net/man/1/gmake}
 
 \end{thebibliography}
 
